@@ -1,13 +1,21 @@
-//to connect to SQL DB, and give us back connection object which allows
-//us to query.
-const mysql = require("mysql2");
+//Sequalize connection setup:
 
-const pool = mysql.createPool({
-     host: "localhost",
-     user: "root",
-     database: "nodedb",
-     password: "password"
+const { Sequelize } = require("sequelize");
+
+const sequelize = new Sequelize(
+     "nodedb", "root", "password", {
+          dialect: "mysql",
+          host: "localhost",    
+     });
+     
+//Testing Sequelize connection to MYSQL DB
+sequelize
+.authenticate()
+.then(() => {
+     console.log('Connection has been established successfully.');
+})
+.catch(err => {
+     console.error('Unable to connect to the database:', err);
 });
 
-
-module.exports = pool.promise();
+module.exports = sequelize;

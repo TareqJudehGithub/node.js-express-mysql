@@ -1,8 +1,14 @@
 .product-form {
-     width: 20rem;
-     max-width: 90%;
-     margin: auto;
-     display: block;
+    width: 20rem;
+    max-width: 90%;
+    margin: auto;
+    display: block;
+    margin-top: 8rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    padding: 15px;
+ }
+ .product-form h2 {
+    text-align: center;
  }
  
  .product-item {
@@ -11,7 +17,7 @@
      margin: 1rem;
    
  }
- 
+
  .product__title {
      font-size: 1.2rem;
      text-align: center;
@@ -32,6 +38,13 @@
     align-items: center;
     margin: 0 auto;
     padding: 15px;
-
-
  }
+ .card__image {
+    height: auto;
+    width: 10em;
+    margin: 0 auto;
+  }
+  /* Any image tag with in that class should respect .image values */
+  .card img {
+    height: 100%;
+  }

@@ -3,28 +3,32 @@ const Product = require("../models/products");
 const Cart = require("../models/cart");
 
 //users routes:
+
+//Products page
 exports.getProducts = (req, res, next) => {
-     Product.fetchAll()
-          .then(([rows]) => {
+     Product.findAll()
+          .then(products => {
                res.render(
                     "shop/product-list.ejs",
                     {
-                         prods: rows,
+                         prods: products,
                          pageTitle: "Products List",
                          path: "/products"
                     });
-          })
-          .catch(err => console.log("Products List Error!", err));
+               })
+               .catch(err => console.log("Products List Error!", err));
 };
 
+//Product details:
 exports.getProductById = (req, res, next) => {
      const prodId = req.params.id;
-     Product.findById(prodId)
-          .then(([product]) => {
+     // Product.findAll({where: { id: prodId }}) OR: 
+     Product.findByPk(prodId)
+          .then((product) => {
                res.render(
                     "shop/product-detail.ejs",
                     {
-                         product: product[0],
+                         product: product,
                          pageTitle: "Product Details",
                          path: "/products"
                     }
@@ -32,20 +36,22 @@ exports.getProductById = (req, res, next) => {
           })
           .catch(err => console.log(err));
 };
-
+//Shop (main page)
  exports.getIndex = (req, res, next) => {
-     Product.fetchAll()
-          .then(( [products] ) => {
-               res.render(
-                    "shop/index.ejs",
-                    {
+     Product.findAll()
+     .then(products => {
+          res.render(
+               "shop/index.ejs",
+               {
                     prods: products,
                     pageTitle: "Shop",
                     path: "/"
                });
-          })
-          .catch(err => console.log(err));
+     })
+     .catch(err => {console.log(err)});
  };
+
+ //Cart
  exports.getCart = (req, res, next) => {
      Cart.getCart(cart => {   //test if this is the same cart var in cart.js
           //fetch all products
@@ -75,6 +81,7 @@ exports.getProductById = (req, res, next) => {
           });   
      });
  };
+//Add to Cart
 exports.postCart = (req, res, next) => {
      const prodId = req.body.Id;
      Product.findById(prodId, product => {
@@ -84,6 +91,7 @@ exports.postCart = (req, res, next) => {
      res.redirect("/cart");
    };
  
+//Delete product
 exports.postCartDeleteProduct = (req, res, next) => {
      const prodId = req.body.id;
      //get price from product.js:
@@ -92,7 +100,16 @@ exports.postCartDeleteProduct = (req, res, next) => {
      });
      res.redirect("/cart");
 };
-   
+//Checkout page
+exports.getCheckout = (req, res, next) => {
+     res.render(
+          "shop/checkout.ejs",
+          {
+              pageTitle: "Checkout",
+              path: "/checkout",     
+          })
+};
+//Orders history
 exports.getOrders = (req, res, next) => {
      res.render(
           "shop/orders.ejs",
@@ -101,14 +118,7 @@ exports.getOrders = (req, res, next) => {
               path: "/orders",     
           })
 };
-exports.getCheckout = (req, res, next) => {
-     res.render(
-          "shop/checkout.ejs",
-          {
-              pageTitle: "Checkout",
-              path: "/checkout",     
-          })
-}
+
 
  
  
