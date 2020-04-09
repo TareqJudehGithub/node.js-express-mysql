@@ -1,28 +1,21 @@
-//imports:
+//importing class Product from /modules folder:
 const Product = require("../models/products");
+const Cart = require("../models/cart");
+
 
 //admin routes:
-
-//Add product by Admin
 exports.postAddProduct = (req, res, next) => {
      
+     // const id = req.body.id;
      const title = req.body.title;
-     const price = req.body.price;
      const imageUrl = req.body.imageUrl;
+     const price = req.body.price;
      const description = req.body.description;
-     //saves immediately to MySQL DB:
-     Product.create({
-          title: title,
-          price: price,
-          imageUrl: imageUrl,
-          description: description,
-          
-     })
-     .then(result => {
-          res.redirect("/admin/products");
-          console.log(result +  "adding was successful!")
-     })
-     .catch(err => console.log(err));
+     
+     const product = new Product(null, title, imageUrl, price, description);
+ 
+     product.save(); //this will call the save() we defined in /models/products.
+     res.redirect("/");
 };
 
 exports.getAddProduct = (req, res, next) => {
@@ -44,71 +37,49 @@ exports.getAddProduct = (req, res, next) => {
      //fetching the product using name id set in the 
      //admin.js routes for getEditProduct:
      const prodId = req.params.id;
-     Product.findByPk(prodId)
-          .then(product => {
-               if (!product) {
-                    return res.redirect("/");
-               }
-               res.render(
-                    "admin/edit-product.ejs",
-                    {
-                         pageTitle: "Edit product",
-                         path: "/admin/edit-product",
-                         editing: editMode,
-                         product: product
-                    });
-          })
-          .catch(err => console.log(err)); 
+     Product.findById(prodId, product => {
+          if (!product) {
+               return res.redirect("/");
+          }
+          res.render(
+               "admin/edit-product.ejs",
+               {
+                    pageTitle: "Edit product",
+                    path: "/admin/edit-product",
+                    editing: editMode,
+                    product: product
+               });
+     })
   };
-
-
+//construct a new produt by editing (replacing) the original product:
   exports.postEditProduct = (req, res, next) => {
        const { id, title, imageUrl, price, description } = req.body;
      
-     //find the right product ID:
-     Product.findByPk(id)
-     .then(product => {
-          //this will only change the data localy:
-          product.title = title,
-          product.price = price,
-          product.imageUrl = imageUrl,
-          product.description = description
-          //Now, we save all changes to MySQL db:
-          return product.save();
-     })
-     .then(result => {
-          console.log(result + " update was successful!");
-          res.redirect("/admin/products");
-          })
-     .catch(err => console.log(err));
-    
+//passing prodId will ensure in the model/product.js, in getProductsFromFile,
+// we will fetch the right ID from if statement(updating mode):
+     const updatedProduct = new Product(id, title, imageUrl, price, description);
+     updatedProduct.save();
+     res.redirect("/admin/products");
+     console.log("Product update was successful!");
+     console.log(prodId);
   };
  
   exports.getAdminProducts = (req, res, next) => {
-       Product.findAll()
-       .then(products => {
-          res.render(
-               "admin/products.ejs",
-               {
-                  pageTitle: "Admin Products",
-                  path: "/admin/products",
-                  prods: products
-               });
-       })
-       .catch(err => console.log(err));
+       Product.fetchAll(products => {
+            res.render(
+                 "admin/products.ejs",
+                 {
+                    pageTitle: "Admin Products",
+                    path: "/admin/products",
+                    prods: products
+                 });
+       });
   };
 
 exports.postDeleteProduct = (req, res, next) => {
      const prodId = req.body.id;
-     Product.findByPk(prodId)
-     .then(product => {
-          return product.destroy();
-     })
-    .then(result => {
-         res.redirect("/admin/products");
-         console.log(result + " deletion was successful!");
-    })
-    .catch(err => console.log(err));
-     
+     Product.deleteById(prodId);
+    
+     res.redirect("/admin/products");
      
 };
