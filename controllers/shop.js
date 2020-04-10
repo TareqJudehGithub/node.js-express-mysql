@@ -92,7 +92,6 @@ exports.postCartDeleteProduct = (req, res, next) => {
      });
      res.redirect("/cart");
 };
-
 exports.getCheckout = (req, res, next) => {
      res.render(
           "shop/checkout.ejs",
