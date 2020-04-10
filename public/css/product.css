@@ -1,3 +1,6 @@
+/* .shop-page {
+    margin-top: 8rem;
+} */
 .product-form {
     width: 20rem;
     max-width: 90%;
@@ -38,6 +41,7 @@
     align-items: center;
     margin: 0 auto;
     padding: 15px;
+    margin-top: 8rem;
  }
  .card__image {
     height: auto;
@@ -47,4 +51,8 @@
   /* Any image tag with in that class should respect .image values */
   .card img {
     height: 100%;
+  }
+  .no-products{
+    text-align: center;
+    margin-top: 8rem;
   }

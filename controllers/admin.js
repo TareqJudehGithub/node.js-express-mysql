@@ -1,8 +1,26 @@
 //imports:
 const Product = require("../models/products");
 
-
 //Add product by Admin
+     //Add Product page
+exports.getAddProduct = (req, res, next) => {
+     //fetching the product using name id set in the 
+    //admin.js routes for getEditProduct:
+    
+    Product.findAll()
+         .then(products => {
+              res.render(
+                   "admin/edit-product.ejs",
+                   {
+                        pageTitle: "Add new product",
+                        path: "/admin/add-product",
+                        prods: products,
+                        editing: false 
+                   });          
+         })
+         .catch(err => console.log(err)); 
+};
+     //Add Product page
 exports.postAddProduct = (req, res, next) => {
      
      const title = req.body.title;
@@ -11,36 +29,28 @@ exports.postAddProduct = (req, res, next) => {
      const description = req.body.description;
 
      //saves immediately to MySQL DB:
-      Product.create({
+     //Sequelize allows us to create new associated objects: 
+     //Sequelize method .createProduct()
+     //since Product.belongTo(user) is defined in server.js, Sequelize will
+     //create a .createProduct() method to the user
+     //will create the user
+
+//req.user is the request in User.use() middlewhere in server.js
+// .createProduct()   Product is the model name (Product.js) and create is Sequelize
+//method to create new item in db. Sequelize allows us to add new objects, so it created
+//createProduct for us.
+     req.user.createProduct({  
           title: title,
           price: price,
           imageUrl: imageUrl,
           description: description,
-     })
+     }) 
      .then(result => {
           res.redirect("/admin/products");
-          console.log(result +  "adding was successful!")
+          console.log(result.title +  " adding was successful!")
      })
      .catch(err => console.log(err));
 };
-
-exports.getAddProduct = (req, res, next) => {
-      //fetching the product using name id set in the 
-     //admin.js routes for getEditProduct:
-     
-     Product.findAll()
-          .then(products => {
-               res.render(
-                    "admin/edit-product.ejs",
-                    {
-                         pageTitle: "Add new product",
-                         path: "/admin/add-product",
-                         prods: products,
-                         editing: false 
-                    });          
-          })
-          .catch(err => console.log(err)); 
- };
 
   exports.getEditProduct = (req, res, next) => {
      const editMode =req.query.edit;
@@ -50,9 +60,15 @@ exports.getAddProduct = (req, res, next) => {
      //fetching the product using name id set in the 
      //admin.js routes for getEditProduct:
      const prodId = req.params.id;
-     //find the right product ID:
-     Product.findByPk(prodId)
+
+     // Product.findByPk(prodId) OR:
+     //find the right product ID, for the current user:
+     req.user
+     .getProducts({where: {id: prodId}})
+     
+     
      .then(product => {
+          
           if (!product) {
                return res.redirect("/");
           }
@@ -62,7 +78,7 @@ exports.getAddProduct = (req, res, next) => {
                     pageTitle: "Edit product",
                     path: "/admin/edit-product",
                     editing: editMode,
-                    product: product
+                    product: product[0]
                });
      })
      .catch(err => console.log(err)); 
@@ -70,7 +86,7 @@ exports.getAddProduct = (req, res, next) => {
 
 //construct a new produt by editing (replacing) the original product:
   exports.postEditProduct = (req, res, next) => {
-       const { id, title, imageUrl, price, description } = req.body;
+     const { id, title, imageUrl, price, description } = req.body;
      
     //find the right product ID:
     Product.findByPk(id)
@@ -84,14 +100,15 @@ exports.getAddProduct = (req, res, next) => {
          return product.save();
     })
     .then(result => {
-         console.log(result + " update was successful!");
+         console.log(result.title + " update was successful!");
          res.redirect("/admin/products");
          })
     .catch(err => console.log(err));
   };
  
   exports.getAdminProducts = (req, res, next) => {
-     Product.findAll()
+     // get all products for the current user:
+     req.user.getProducts()
      .then(products => {
         res.render(
              "admin/products.ejs",

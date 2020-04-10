@@ -19,10 +19,11 @@ exports.getProducts = (req, res, next) => {
 };
 //Product details:
  exports.getProductById = (req, res, next) => {
-  //* The name we use after params is the name we used
-     //in the route in /routes/shop.js
+  //* The value we use after params is the value we used
+     //in the route in /routes/shop.js   (/products/:id)
      const prodId = req.params.id;
-     // Product.findAll({where: { id: prodId }}) OR: 
+     // Product.findOne({where: { id: prodId }})
+     // OR: 
      Product.findByPk(prodId)
           .then((product) => {
                res.render(
@@ -53,33 +54,25 @@ exports.getProducts = (req, res, next) => {
  };
  //Cart
  exports.getCart = (req, res, next) => {
-     Cart.getCart(cart => {   //test if this is the same cart var in cart.js
-          //fetch all products
-          Product.fetchAll(products => {
-               const cartProducts = [];
-               products.map(product =>  {
-                    const cartProductData = cart.products.find(prod => 
-                         prod.id === product.id);
-                    //check for the item in cart exists or not:
-                    if(cartProductData) {
-                         //add the product i'm looking for:
-                         cartProducts.push({ 
-                              productData: product, 
-                              qty: cartProductData.qty });
-                         }
-                   
-               //afte this, i'll have an array of products,
-               //which are in the cart:
-               })
+     //fetching cart from db:
+     req.user
+     .getCart()
+     .then(cart => {
+     //fetching products inside the cart from db: Cart.belongsTomany(Product, {through: CartItem});
+          return cart.getProducts()
+          //products available in cart and rendering them to page /cart:
+          .then(product => {
                res.render(
-                    "shop/cart.ejs",
+                    ("shop/cart.ejs"),
                     {
-                        pageTitle: "Cart",
-                        path: "/cart",    
-                        products: cartProducts 
+                         products: product,
+                         pageTitle: "Shopping Cart",
+                         path: "/cart"
                     });
-          });   
-     });
+          }) 
+          .catch(err => console.log(err));
+     })
+     .catch(err => console.log(err));
  };
 //Add to Cart
 exports.postCart = (req, res, next) => {

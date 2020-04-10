@@ -4,7 +4,7 @@
 <body>
      <%- include("../includes/navigation.ejs") %>
      <link rel="stylesheet" href="/css/product.css">
-     <main class="grid centered">
+     <main class="centered">
           
           <% if (products.length > 0 ) { %>
                <ul class="">
@@ -30,7 +30,9 @@
                     <% })%>
                </ul>
           <%}else{%>
-               <h2>Cart is empty</h2>
+               <div class="no-products">
+                    <h2>Shopping Cart is empty</h2>
+               </div>
           <%}%>
      </main>
 

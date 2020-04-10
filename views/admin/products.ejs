@@ -18,8 +18,8 @@
                                    alt="<%= product.title %>">
                               </div>
                               <div class="card__content">
-                                   <h2 class="product__price">$
-                                        <%= product.price %>
+                                   <h2 class="product__price">
+                                        $<%= product.price %>
                                    </h2>
                                    <p class="product__description">
                                         <%= product.description %>
@@ -37,7 +37,9 @@
                </div>
                <% } 
                else {  %>
-               <h2>Products List is empty</h2>
+                    <div class="no-products">
+                         <h2>Products List is empty</h2>
+                    </div>
           <% } %>
      </main>
      <%- include("../includes/end.ejs") %>
