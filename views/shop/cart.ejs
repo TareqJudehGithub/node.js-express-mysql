@@ -7,23 +7,26 @@
      <main class="centered">
           
           <% if (products.length > 0 ) { %>
-               <ul class="">
+               <ul class="no-products">
                     <% products.map(prod => { %>
                          <h2>Shopping Cart</h2>
                          <li class="product__cart centered card">
                               <!-- productData from getCart route in /controllers/shop.js -->
      
                               <p>
-                                   <%= prod.productData.title%>
+                                   <%= prod.title%>
                               </p>
                               <p>
-                                   <img src="<%=prod.productData.imageUrl%>" height="100px" width="100px" alt="<%= prod.productData.title%>"> 
+                                   <img src="<%=prod.imageUrl%>" height="100px" width="100px" alt="<%= prod.title%>"> 
                               </p>
                               <p>
-                                   <%= prod.qty%>
+                                   <%= prod.cartItem.quantity%>
+                              </p>
+                              <p>
+                                   <%= prod.price%>
                               </p>
                               <form action="/cart-delete-item" method="POST">
-                                   <input type="hidden" name="id" value="<%= prod.productData.id%>">
+                                   <input type="hidden" name="id" value="<%= prod.id%>">
                                    <button class="btn" type="submit">Delete</button>
                               </form>
                          </li>

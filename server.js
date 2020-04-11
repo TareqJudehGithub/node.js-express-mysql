@@ -52,11 +52,8 @@ Product.belongsTo(User, {constraints: true, onDelete: "CASCADE"});
 User.hasMany(Product);
 //one to one relationship:
 User.hasOne(Cart);
-Cart.belongsTo(User);
 //through: to tell Sequelize where these connections should be stored.
 Cart.belongsToMany(Product, {through: CartItem});
-//many to many relationship:
-Product.belongsToMany(Cart, {through: CartItem} );
 
 
 //Creating table in MYSQL using Sequelize:

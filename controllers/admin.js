@@ -4,9 +4,7 @@ const Product = require("../models/products");
 //Add product by Admin
      //Add Product page
 exports.getAddProduct = (req, res, next) => {
-     //fetching the product using name id set in the 
-    //admin.js routes for getEditProduct:
-    
+
     Product.findAll()
          .then(products => {
               res.render(
@@ -15,7 +13,7 @@ exports.getAddProduct = (req, res, next) => {
                         pageTitle: "Add new product",
                         path: "/admin/add-product",
                         prods: products,
-                        editing: false 
+                        editing: false,
                    });          
          })
          .catch(err => console.log(err)); 
@@ -23,27 +21,14 @@ exports.getAddProduct = (req, res, next) => {
      //Add Product page
 exports.postAddProduct = (req, res, next) => {
      
-     const title = req.body.title;
-     const price = req.body.price;
-     const imageUrl = req.body.imageUrl; 
-     const description = req.body.description;
+     const { title, price, imageUrl, description } = req.body;
 
-     //saves immediately to MySQL DB:
-     //Sequelize allows us to create new associated objects: 
-     //Sequelize method .createProduct()
-     //since Product.belongTo(user) is defined in server.js, Sequelize will
-     //create a .createProduct() method to the user
-     //will create the user
-
-//req.user is the request in User.use() middlewhere in server.js
-// .createProduct()   Product is the model name (Product.js) and create is Sequelize
-//method to create new item in db. Sequelize allows us to add new objects, so it created
-//createProduct for us.
-     req.user.createProduct({  
+     req.user
+     .createProduct({  
           title: title,
           price: price,
           imageUrl: imageUrl,
-          description: description,
+          description: description
      }) 
      .then(result => {
           res.redirect("/admin/products");
@@ -53,10 +38,7 @@ exports.postAddProduct = (req, res, next) => {
 };
 
   exports.getEditProduct = (req, res, next) => {
-     const editMode =req.query.edit;
-     if(!editMode){
-          return res.redirect("/");
-     }
+    
      //fetching the product using name id set in the 
      //admin.js routes for getEditProduct:
      const prodId = req.params.id;
@@ -69,15 +51,12 @@ exports.postAddProduct = (req, res, next) => {
      
      .then(product => {
           
-          if (!product) {
-               return res.redirect("/");
-          }
           res.render(
                "admin/edit-product.ejs",
                {
                     pageTitle: "Edit product",
                     path: "/admin/edit-product",
-                    editing: editMode,
+                    editing: true,
                     product: product[0]
                });
      })
