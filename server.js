@@ -11,7 +11,8 @@ const Product = require("./models/products");
 const User = require("./models/user");
 const Cart = require("./models/cart");
 const CartItem = require("./models/cart-item");
-
+const Order = require("./models/order");
+const OrderItem = require("./models/order-item");
 
 //EJS 1. setup:
 app.set("view engine", "ejs");
@@ -53,8 +54,12 @@ User.hasMany(Product);
 //one to one relationship:
 User.hasOne(Cart);
 //through: to tell Sequelize where these connections should be stored.
-Cart.belongsToMany(Product, {through: CartItem});
-
+Cart.belongsToMany(Product, { through: CartItem }); //cart.getProduct()
+//an Order belongs to one user:
+Order.belongsTo(User);   
+//A user has many orders  (one to many):
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem }); //order.getProduct()
 
 //Creating table in MYSQL using Sequelize:
 // sequelize.sync({force: true})
