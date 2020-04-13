@@ -54,11 +54,13 @@ User.hasMany(Product);
 //one to one relationship:
 User.hasOne(Cart);
 //through: to tell Sequelize where these connections should be stored.
+//Joining Cart and Product tables through cartItem table:
 Cart.belongsToMany(Product, { through: CartItem }); //cart.getProduct()
 //an Order belongs to one user:
 Order.belongsTo(User);   
 //A user has many orders  (one to many):
 User.hasMany(Order);
+//Joining products and order tables through orderItem table:
 Order.belongsToMany(Product, { through: OrderItem }); //order.getProduct()
 
 //Creating table in MYSQL using Sequelize:
@@ -76,7 +78,7 @@ sequelize.sync()
      return Promise.resolve(user);
 })
 .then(user => {
-     // console.log(user);
+//creating cart for this user:
      return user.createCart()
 .then(cart => {
      app.listen(4000, () => {

@@ -1,6 +1,5 @@
 //imports:
 const Product = require("../models/products");
-const Cart = require("../models/cart");
 
 //users routes:
 exports.getProducts = (req, res, next) => {
@@ -143,22 +142,78 @@ exports.postCartDeleteProduct = (req, res, next) => {
   
 };
 
-exports.getCheckout = (req, res, next) => {
-     res.render(
-          "shop/checkout.ejs",
-          {
-              pageTitle: "Checkout",
-              path: "/checkout",     
-          })
+//move all cart items into postOrder
+exports.postOrder = (req, res, next) => {
+     let productName;
+
+     let fetchedCart;
+     req.user
+     //access to the cart:
+     .getCart()
+     .then(cart => {
+          fetchedCart = cart;
+          console.log(productName = cart.getProducts()) 
+
+          //must use return, to associate products to this order:
+          return cart.getProducts()
+     })
+     //access to the cart, we get access to the products by default:
+     .then(products => {
+          return req.user
+          .createOrder()
+          .then(order => {
+               //associating products to this order:
+               //adding the product and it's quantity to the order:           
+               return order.addProducts(
+                    products.map(product => {
+                    //to include product qty field in orderItem table:
+
+//.map(element).(order-item table name: orderItem) = {column name(value): quantity: (products model name.table name. column name)};
+                    product.orderItem = { 
+                         quantity: product.cartItem.quantity,
+                         // title: product.cartItem.title,          
+                         // price: product.cartItem.price,
+                         // imageUrl: product.cartItem.imageUrl
+                     };
+                    return product;
+               }))
+          })  
+          .catch(err => console.log("Error order" + err));   
+     })
+     .then(result => {
+          //clearing cart after placing an order:
+          return fetchedCart.setProducts(null);
+          // console.log(productName +  " was added successfully to Order.")
+          
+     })
+     .then(result => {
+          res.redirect("/orders");
+     })
+     .catch(err => console.log("Error products: " + err));
 }
+
 exports.getOrders = (req, res, next) => {
-     res.render(
-          "shop/orders.ejs",
-          {
-              pageTitle: "Orders",
-              path: "/orders",     
-          })
+     req.user
+     //must include products(Order.belongsToMany(Product) line ) if we wanted to loop.
+     //since we fetching all orders, we must also fetch back all related products.
+     //eager loading: fetch all related products, calling back an array or orders
+     //that also includes products per order. And this will work, because we have
+     //a relation between orders and products, define in server.js.
+     //so now, each order will have a product array.
+     .getOrders({include: ["products"]})
+     .then(orders => {
+          res.render(
+               "shop/orders.ejs",
+               {
+                    orders: orders,
+                    pageTitle: "Orders",
+                    path: "/orders",     
+               })
+     })
+     .catch(err => console.log("Error getOrders: " + err));
+    
 };
+
 
 
  

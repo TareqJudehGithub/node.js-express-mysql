@@ -12,6 +12,7 @@ body {
 main {
   padding: 1rem;
   margin: auto;
+  font-size: calc(9px + 1vmin);
 }
 form {
   display: inline;
@@ -155,6 +156,8 @@ form {
 
 .card {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  width: 90%;
+  margin: 10px auto;
 }
 
 .card__header,

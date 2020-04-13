@@ -9,9 +9,21 @@ const CartItem = sequelize.define("cartItem", {
           primaryKey: true
      },
      quantity: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-     }
+          type: Sequelize.INTEGER
+         
+     },
+     // title: {
+     //      type: Sequelize.STRING,
+        
+     // },
+    
+     // price: {
+     //      type: Sequelize.DOUBLE
+        
+     // },
+     // imageUrl: {
+     //      type: Sequelize.STRING
+     // }
 });
 
 module.exports = CartItem;

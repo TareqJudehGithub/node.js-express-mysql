@@ -42,7 +42,7 @@ exports.postAddProduct = (req, res, next) => {
      //fetching the product using name id set in the 
      //admin.js routes for getEditProduct:
      const prodId = req.params.id;
-
+     console.log((Object.keys(req.user.__proto__)));
      // Product.findByPk(prodId) OR:
      //find the right product ID, for the current user:
      req.user
