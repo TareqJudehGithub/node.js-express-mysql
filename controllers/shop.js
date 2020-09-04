@@ -144,15 +144,13 @@ exports.postCartDeleteProduct = (req, res, next) => {
 
 //move all cart items into postOrder
 exports.postOrder = (req, res, next) => {
-     let productName;
-
+   
      let fetchedCart;
      req.user
      //access to the cart:
      .getCart()
      .then(cart => {
           fetchedCart = cart;
-          console.log(productName = cart.getProducts()) 
 
           //must use return, to associate products to this order:
           return cart.getProducts()
@@ -170,10 +168,7 @@ exports.postOrder = (req, res, next) => {
 
 //.map(element).(order-item table name: orderItem) = {column name(value): quantity: (products model name.table name. column name)};
                     product.orderItem = { 
-                         quantity: product.cartItem.quantity,
-                         // title: product.cartItem.title,          
-                         // price: product.cartItem.price,
-                         // imageUrl: product.cartItem.imageUrl
+                         quantity: product.cartItem.quantity
                      };
                     return product;
                }))
@@ -194,12 +189,6 @@ exports.postOrder = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
      req.user
-     //must include products(Order.belongsToMany(Product) line ) if we wanted to loop.
-     //since we fetching all orders, we must also fetch back all related products.
-     //eager loading: fetch all related products, calling back an array or orders
-     //that also includes products per order. And this will work, because we have
-     //a relation between orders and products, define in server.js.
-     //so now, each order will have a product array.
      .getOrders({include: ["products"]})
      .then(orders => {
           res.render(
@@ -211,7 +200,6 @@ exports.getOrders = (req, res, next) => {
                })
      })
      .catch(err => console.log("Error getOrders: " + err));
-    
 };
 
 
